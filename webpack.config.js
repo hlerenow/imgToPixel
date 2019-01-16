@@ -7,6 +7,7 @@ var entries = utils.getEntry(utils.resolve('/src/**/index.js'))
 var packager = require('./package.json')
 
 module.exports = {
+  mode: ENV === 'dev' ? 'development' : 'production',
   entry: entries,
   output: {
     path: path.join(__dirname, CONFIG.outputDir),
@@ -55,12 +56,6 @@ if (ENV === 'prod') {
     module.exports.plugins.push(new BundleAnalyzerPlugin())
   }
   module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
-      }
-    }),
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })
