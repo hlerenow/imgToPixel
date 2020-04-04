@@ -1,42 +1,82 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
+
 let canvas = document.getElementById('domCanvas')
 let canvasCtx = canvas.getContext('2d')
-let img = document.getElementById('img')
-let a = new ImgToPixel({
-  imgObj: 'http://statics.h-five.com/withme.jpg'
-  // imgObj: img
+let globalImg = document.getElementById('img')
+let globalImgHandle = null
+
+function getImgDomSize() {
+  let style = getComputedStyle(globalImg, null)
+  let w = parseInt(style.width)
+  let h = parseInt(style.height)
+
+  return {
+    w: w,
+    h: h
+  }
+}
+
+function updateSourceImg(url) {
+  globalImg.src = url
+}
+
+function updateCanvasSize() {
+  let style = getComputedStyle(globalImg, null)
+  let w = parseInt(style.width)
+  let h = parseInt(style.height)
+  canvas.with = w
+  canvas.hight = h
+  canvas.style.width = w + 'px'
+  canvas.style.height = h + 'px'
+  canvas.width = w
+  canvas.height = h
+  canvas.width = w
+  canvas.height = h
+}
+
+function changeImgContent() {
+  let pixObj = globalImgHandle
+  let pixelSize = pixObj.getSize()
+  console.log('Leo: changeImgContent -> pixObj.getLength()', pixObj.getLength())
+
+  pixObj.forEach(ImgToPixel.EffectFunction.Gray)
+  updateCanvasSize()
+  console.log(pixObj.toBase64())
+  canvasCtx.clearRect(0, 0, 999, 999)
+  canvasCtx.putImageData(pixObj.getAllPixel(), 0, 0)
+}
+
+// url 加载方式
+ImgToPixel.getImgObjByUrl('http://statics.h-five.com/withme.jpg', function(img) {
+  let imgSize = getImgDomSize()
+  let handle = new ImgToPixel({
+    imgObj: img,
+    width: imgSize.w,
+    height: imgSize.h
+  })
+  globalImgHandle = handle
+  console.log('Leo: handle', handle)
+  changeImgContent()
 })
 
-a.ready((handle) => {
-  let pixObj = handle.getPixel({
+// 图片文件的方式加载
+let fileBox = document.getElementById('fileBox')
+fileBox.addEventListener('change', function(evt) {
+  let file = evt.target.files[0]
+  let img = ImgToPixel.getImgObjByFile(file).then((data) => {
+    img = data
+    updateSourceImg(img)
+    ImgToPixel.getImgObjByUrl(img, function(img) {
+      let imgSize = getImgDomSize()
+      let handle = new ImgToPixel({
+        imgObj: img,
+        width: imgSize.w,
+        height: imgSize.h
+      })
+      globalImgHandle = handle
+      changeImgContent()
+      console.log('Leo: handle', handle)
+    })
   })
-  console.log(a)
-  console.log(pixObj)
-  /* get pixel value by x, y */
-  console.log(pixObj.get(481, 256))
-  /* color Object */
-  let obj = {
-    r: 255,
-    g: 0,
-    b: 0,
-    a: 1
-  }
-  /* set pixel value by x, y */
-  pixObj.set(1, 1, obj)
-  pixObj.set(1, a._imgHeight, obj)
-  pixObj.set(a._imgWidth, 1, obj)
-  pixObj.set(a._imgWidth, a._imgHeight, obj)
-
-  pixObj.set(481, 256, obj)
-  pixObj.set(481, 257, obj)
-  pixObj.set(481, 258, obj)
-  pixObj.set(481, 259, obj)
-
-  pixObj.set(482, 256, obj)
-  pixObj.set(483, 257, obj)
-  pixObj.set(484, 258, obj)
-  pixObj.set(485, 259, obj)
-  canvasCtx.clearRect(0, 0, a._imgWidth, a._imgHeight)
-  canvasCtx.putImageData(pixObj.set(481, 256, obj), 0, 0)
 })
