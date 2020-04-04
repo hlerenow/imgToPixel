@@ -140,7 +140,6 @@ class ImgToPixel extends PixelIndexObj {
     const canvasDom = this._canvasDom
     canvasCtx.clearRect(0, 0, 999, 999)
     canvasCtx.putImageData(this.getAllPixel(), 0, 0)
-    console.log('Leo: ImgToPixel -> canvasCtx', canvasDom)
     return canvasDom.toDataURL(type, quality)
   }
 }

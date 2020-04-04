@@ -38,11 +38,9 @@ function updateCanvasSize() {
 function changeImgContent() {
   let pixObj = globalImgHandle
   let pixelSize = pixObj.getSize()
-  console.log('Leo: changeImgContent -> pixObj.getLength()', pixObj.getLength())
 
   pixObj.forEach(ImgToPixel.EffectFunction.Gray)
   updateCanvasSize()
-  console.log(pixObj.toBase64())
   canvasCtx.clearRect(0, 0, 999, 999)
   canvasCtx.putImageData(pixObj.getAllPixel(), 0, 0)
 }
@@ -56,7 +54,6 @@ ImgToPixel.getImgObjByUrl('http://statics.h-five.com/withme.jpg', function(img) 
     height: imgSize.h
   })
   globalImgHandle = handle
-  console.log('Leo: handle', handle)
   changeImgContent()
 })
 
@@ -76,7 +73,6 @@ fileBox.addEventListener('change', function(evt) {
       })
       globalImgHandle = handle
       changeImgContent()
-      console.log('Leo: handle', handle)
     })
   })
 })
