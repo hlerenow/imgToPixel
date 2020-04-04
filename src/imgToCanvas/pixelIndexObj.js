@@ -1,10 +1,10 @@
 class PixelIndexObj {
-  constructor (pixelArry, width, height) {
+  constructor(pixelArry, width, height) {
     this._pixelArry = pixelArry || []
   }
 
   xyToIndex(x, y) {
-    let {_pixelArry} = this
+    let { _pixelArry } = this
     let _w = _pixelArry.width
     let index = 0
     index = _w * (y - 1) * 4 + (x - 1) * 4
@@ -17,8 +17,8 @@ class PixelIndexObj {
     }
   }
 
-  get (x, y) {
-    let {_pixelArry} = this
+  get(x, y) {
+    let { _pixelArry } = this
     let index = this.xyToIndex(x, y)
     if (index > -1) {
       return {
@@ -37,8 +37,8 @@ class PixelIndexObj {
     }
   }
 
-  set (x, y ,rgbaObj) {
-    let {_pixelArry} = this
+  set(x, y, rgbaObj) {
+    let { _pixelArry } = this
     let index = this.xyToIndex(x, y)
     if (index < 0) {
       return false
@@ -51,7 +51,7 @@ class PixelIndexObj {
     }
   }
 
-  getAll () {
+  getAll() {
     return this._pixelArry
   }
 }
