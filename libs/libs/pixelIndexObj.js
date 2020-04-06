@@ -29,11 +29,22 @@ var PixelIndexObj = /*#__PURE__*/function () {
       /* 超出范围索引 */
 
       if (index < 0 || index >= _pixelArry.data.length) {
-        console.warn('超出图片像素索引范围', x, y, index, _pixelArry.data.length);
+        // console.warn('超出图片像素索引范围', x, y, index, _pixelArry.data.length)
         return -1;
       } else {
         return index;
       }
+    }
+  }, {
+    key: "indexToXy",
+    value: function indexToXy(index) {
+      var width = this._pixelArry.width;
+      var x = index % (width * 4) / 4;
+      var y = Math.floor(index / (width * 4));
+      return {
+        x: x,
+        y: y
+      };
     }
   }, {
     key: "get",
@@ -56,6 +67,17 @@ var PixelIndexObj = /*#__PURE__*/function () {
           a: -1
         };
       }
+    }
+  }, {
+    key: "getByIndex",
+    value: function getByIndex(index) {
+      var _pixelArry = this._pixelArry;
+      return {
+        r: _pixelArry.data[index],
+        g: _pixelArry.data[index + 1],
+        b: _pixelArry.data[index + 2],
+        a: _pixelArry.data[index + 3] / 255
+      };
     }
   }, {
     key: "set",
@@ -115,6 +137,51 @@ var PixelIndexObj = /*#__PURE__*/function () {
       }
 
       return this._pixelArry;
+    } // 异步处理数据
+
+  }, {
+    key: "forEachAsync",
+    value: function forEachAsync(func) {
+      var _this = this;
+
+      var count = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1000;
+      // 4 数据 描述一个像素颜色
+      count = count * 4;
+      return new Promise(function (resolve) {
+        var index = 0;
+
+        _this.chunk(func, _this._pixelArry.data, index, count, resolve);
+      });
+    }
+  }, {
+    key: "chunk",
+    value: function chunk(func, data, index, count, cb) {
+      var _this2 = this;
+
+      var w = this._pixelArry.width;
+      var h = this._pixelArry.height;
+
+      if (data.length > index) {
+        var maxIndex = index + count;
+        maxIndex = maxIndex > data.length ? data.length : maxIndex;
+
+        for (var j = index; j < maxIndex; j += 4) {
+          var _this$indexToXy = this.indexToXy(j),
+              x = _this$indexToXy.x,
+              y = _this$indexToXy.y;
+
+          var colorObj = this.getByIndex(j);
+          var resColor = func(x, y, colorObj, w, h);
+          index += 4;
+          this.set(x, y, resColor);
+        }
+
+        setTimeout(function () {
+          _this2.chunk(func, data, index, count, cb);
+        }, 0);
+      } else {
+        cb(data);
+      }
     }
   }]);
 

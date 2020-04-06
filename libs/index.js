@@ -57,7 +57,8 @@ var ImgToPixel = /*#__PURE__*/function (_PixelIndexObj) {
           var base64 = evt.target.result;
 
           if (cb && typeof cb === 'function') {
-            cb(base64);
+            var p = this.getImgObjByUrl(base64);
+            cb(p);
           }
 
           resolve(base64);
@@ -220,7 +221,9 @@ var ImgToPixel = /*#__PURE__*/function (_PixelIndexObj) {
       var quality = arguments.length > 1 ? arguments[1] : undefined;
       var canvasCtx = this._canvasCtx;
       var canvasDom = this._canvasDom;
-      canvasCtx.clearRect(0, 0, 999, 999);
+      var w = this._imgNatureWidth;
+      var h = this._imgNatureHeight;
+      canvasCtx.clearRect(0, 0, w, h);
       canvasCtx.putImageData(this.getAllPixel(), 0, 0);
       return canvasDom.toDataURL(type, quality);
     }
@@ -229,7 +232,7 @@ var ImgToPixel = /*#__PURE__*/function (_PixelIndexObj) {
   return ImgToPixel;
 }(PixelIndexObj);
 
-ImgToPixel.prototype.version = '1.0.0';
+ImgToPixel.prototype.version = '1.0.1';
 ImgToPixel.EffectFunction = EffectFunction;
 export { ImgToPixel };
 export default ImgToPixel;
