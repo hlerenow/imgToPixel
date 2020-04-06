@@ -50,18 +50,24 @@ var ImgToPixel = /*#__PURE__*/function (_PixelIndexObj) {
   }, {
     key: "getImgObjByFile",
     value: function getImgObjByFile(file, cb) {
-      return new Promise(function (resolve, reject) {
+      var _this2 = this;
+
+      return new Promise(function (resolve) {
         var reader = new FileReader();
 
         reader.onload = function (evt) {
           var base64 = evt.target.result;
 
           if (cb && typeof cb === 'function') {
-            var p = this.getImgObjByUrl(base64);
-            cb(p);
-          }
+            var _p = _this2.getImgObjByUrl(base64);
 
-          resolve(base64);
+            cb(_p);
+          } // return
+
+
+          var p = _this2.getImgObjByUrl(base64);
+
+          resolve(p);
         };
 
         reader.readAsDataURL(file);
@@ -232,7 +238,7 @@ var ImgToPixel = /*#__PURE__*/function (_PixelIndexObj) {
   return ImgToPixel;
 }(PixelIndexObj);
 
-ImgToPixel.prototype.version = '1.0.1';
+ImgToPixel.prototype.version = '1.0.2';
 ImgToPixel.EffectFunction = EffectFunction;
 export { ImgToPixel };
 export default ImgToPixel;

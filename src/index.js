@@ -25,15 +25,17 @@ class ImgToPixel extends PixelIndexObj {
 
   // 将文件返回一个图片对象
   static getImgObjByFile(file, cb) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve) => {
       let reader = new FileReader()
-      reader.onload = function(evt) {
+      reader.onload = (evt) => {
         var base64 = evt.target.result
         if (cb && typeof cb === 'function') {
           let p = this.getImgObjByUrl(base64)
           cb(p)
         }
-        resolve(base64)
+        // return
+        let p = this.getImgObjByUrl(base64)
+        resolve(p)
       }
       reader.readAsDataURL(file)
     })

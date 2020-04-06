@@ -22,7 +22,7 @@ npm install imgtopixel --save
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ImgToPixcel</title>
+    <title>ImgToPixel</title>
   </head>
   <body>
       <img id="img" src="http://statics.h-five.com/withme.jpg" />
@@ -32,9 +32,9 @@ npm install imgtopixel --save
 ```
 
 ```javascript
-  import ImgToPixel from 'imgtopixel'
+import ImgToPixel from 'imgtopixel'
 
- let canvas = document.getElementById('domCanvas')
+let canvas = document.getElementById('domCanvas')
 let canvasCtx = canvas.getContext('2d')
 let globalImg = document.getElementById('img')
 let globalImgHandle = null
@@ -47,8 +47,15 @@ ImgToPixel.getImgObjByUrl('http://statics.h-five.com/withme.jpg', function(img) 
     width: imgSize.w,
     height: imgSize.h
   })
-  globalImgHandle = handle
-  changeImgContent()
+  handle.forEach(ImgToPixel.EffectFunction.Gray)
+
+  // 图片太大时 采用异步处理
+  handle.forEachAsync(ImgToPixel.EffectFunction.Gray, 1000)
+    .then(() => {
+      let base64Img = handle.toBase64()
+    })
+
+  let base64Img = handle.toBase64()
 })
 
 // 图片文件的方式加载
@@ -66,7 +73,15 @@ fileBox.addEventListener('change', function(evt) {
         height: imgSize.h
       })
       globalImgHandle = handle
-      changeImgContent()
+      handle.forEach(ImgToPixel.EffectFunction.Gray)
+
+      // 图片太大时 采用异步处理
+      handle.forEachAsync(ImgToPixel.EffectFunction.Gray, 1000)
+        .then(() => {
+          let base64Img = handle.toBase64()
+        })
+
+      let base64Img = handle.toBase64()
     })
   })
 })
@@ -82,31 +97,4 @@ function getImgDomSize() {
   }
 }
 
-function updateSourceImg(url) {
-  globalImg.src = url
-}
-
-function updateCanvasSize() {
-  let style = getComputedStyle(globalImg, null)
-  let w = parseInt(style.width)
-  let h = parseInt(style.height)
-  canvas.with = w
-  canvas.hight = h
-  canvas.style.width = w + 'px'
-  canvas.style.height = h + 'px'
-  canvas.width = w
-  canvas.height = h
-  canvas.width = w
-  canvas.height = h
-}
-
-function changeImgContent() {
-  let pixObj = globalImgHandle
-  let pixelSize = pixObj.getSize()
-
-  pixObj.forEach(ImgToPixel.EffectFunction.Gray)
-  updateCanvasSize()
-  canvasCtx.clearRect(0, 0, 999, 999)
-  canvasCtx.putImageData(pixObj.getAllPixel(), 0, 0)
-}
 ```

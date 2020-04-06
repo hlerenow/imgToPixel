@@ -74,13 +74,15 @@ function updateCanvasSize() {
   canvas.height = h
 }
 
-function changeImgContent() {
+async function changeImgContent() {
   let pixObj = globalImgHandle
   let pixelSize = pixObj.getSize()
 
-  pixObj.forEach(ImgToPixel.EffectFunction.Gray)
+  // 每处理 10000 个数据后，在下一个循环周期再处理余下数据
+  let res = await pixObj.forEachAsync(ImgToPixel.EffectFunction.Gray, 10000)
+  console.log('Leo: changeImgContent -> res', res)
   updateCanvasSize()
-  canvasCtx.clearRect(0, 0, 999, 999)
+  canvasCtx.clearRect(0, 0, 9999, 9999)
   canvasCtx.putImageData(pixObj.getAllPixel(), 0, 0)
 }
 
@@ -102,17 +104,15 @@ fileBox.addEventListener('change', function(evt) {
   let file = evt.target.files[0]
   let img = ImgToPixel.getImgObjByFile(file).then((data) => {
     img = data
-    updateSourceImg(img)
-    ImgToPixel.getImgObjByUrl(img, function(img) {
-      let imgSize = getImgDomSize()
-      let handle = new ImgToPixel({
-        imgObj: img,
-        width: imgSize.w,
-        height: imgSize.h
-      })
-      globalImgHandle = handle
-      changeImgContent()
+    updateSourceImg(img.src)
+    let imgSize = getImgDomSize()
+    let handle = new ImgToPixel({
+      imgObj: img,
+      width: imgSize.w,
+      height: imgSize.h
     })
+    globalImgHandle = handle
+    changeImgContent()
   })
 })
 

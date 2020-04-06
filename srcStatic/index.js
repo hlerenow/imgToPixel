@@ -64,16 +64,14 @@ fileBox.addEventListener('change', function(evt) {
   let file = evt.target.files[0]
   let img = ImgToPixel.getImgObjByFile(file).then((data) => {
     img = data
-    updateSourceImg(img)
-    ImgToPixel.getImgObjByUrl(img, function(img) {
-      let imgSize = getImgDomSize()
-      let handle = new ImgToPixel({
-        imgObj: img,
-        width: imgSize.w,
-        height: imgSize.h
-      })
-      globalImgHandle = handle
-      changeImgContent()
+    updateSourceImg(img.src)
+    let imgSize = getImgDomSize()
+    let handle = new ImgToPixel({
+      imgObj: img,
+      width: imgSize.w,
+      height: imgSize.h
     })
+    globalImgHandle = handle
+    changeImgContent()
   })
 })
