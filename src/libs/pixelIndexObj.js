@@ -12,11 +12,18 @@ class PixelIndexObj {
     index = _w * y * 4 + (x) * 4
     /* 超出范围索引 */
     if (index < 0 || index >= _pixelArry.data.length) {
-      console.warn('超出图片像素索引范围', x, y, index, _pixelArry.data.length)
+      // console.warn('超出图片像素索引范围', x, y, index, _pixelArry.data.length)
       return -1
     } else {
       return index
     }
+  }
+
+  indexToXy(index) {
+    let width = this._pixelArry.width
+    let x = (index % (width * 4)) / 4
+    let y = Math.floor(index / (width * 4))
+    return { x, y }
   }
 
   get(x, y) {
@@ -36,6 +43,17 @@ class PixelIndexObj {
         b: -1,
         a: -1
       }
+    }
+  }
+
+  getByIndex(index) {
+    let { _pixelArry } = this
+
+    return {
+      r: _pixelArry.data[index],
+      g: _pixelArry.data[index + 1],
+      b: _pixelArry.data[index + 2],
+      a: _pixelArry.data[index + 3] / 255
     }
   }
 
@@ -85,6 +103,38 @@ class PixelIndexObj {
       }
     }
     return this._pixelArry
+  }
+
+  // 异步处理数据
+  forEachAsync(func, count = 1000) {
+    // 4 数据 描述一个像素颜色
+    count = count * 4
+    return new Promise((resolve) => {
+      let index = 0
+      this.chunk(func, this._pixelArry.data, index, count, resolve)
+    })
+  }
+
+  chunk(func, data, index, count, cb) {
+    let w = this._pixelArry.width
+    let h = this._pixelArry.height
+
+    if (data.length > index) {
+      let maxIndex = index + count
+      maxIndex = maxIndex > data.length ? data.length : maxIndex
+      for (let j = index; j < maxIndex; j += 4) {
+        let { x, y } = this.indexToXy(j)
+        let colorObj = this.getByIndex(j)
+        const resColor = func(x, y, colorObj, w, h)
+        index += 4
+        this.set(x, y, resColor)
+      }
+      setTimeout(() => {
+        this.chunk(func, data, index, count, cb)
+      }, 0)
+    } else {
+      cb(data)
+    }
   }
 }
 

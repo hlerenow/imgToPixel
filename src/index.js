@@ -30,7 +30,8 @@ class ImgToPixel extends PixelIndexObj {
       reader.onload = function(evt) {
         var base64 = evt.target.result
         if (cb && typeof cb === 'function') {
-          cb(base64)
+          let p = this.getImgObjByUrl(base64)
+          cb(p)
         }
         resolve(base64)
       }
@@ -138,7 +139,9 @@ class ImgToPixel extends PixelIndexObj {
   toBase64(type = 'image/png', quality) {
     const canvasCtx = this._canvasCtx
     const canvasDom = this._canvasDom
-    canvasCtx.clearRect(0, 0, 999, 999)
+    const w = this._imgNatureWidth
+    const h = this._imgNatureHeight
+    canvasCtx.clearRect(0, 0, w, h)
     canvasCtx.putImageData(this.getAllPixel(), 0, 0)
     return canvasDom.toDataURL(type, quality)
   }

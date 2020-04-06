@@ -35,13 +35,14 @@ function updateCanvasSize() {
   canvas.height = h
 }
 
-function changeImgContent() {
+async function changeImgContent() {
   let pixObj = globalImgHandle
   let pixelSize = pixObj.getSize()
 
-  pixObj.forEach(ImgToPixel.EffectFunction.Gray)
+  let res = await pixObj.forEachAsync(ImgToPixel.EffectFunction.Gray)
+  console.log('Leo: changeImgContent -> res', res)
   updateCanvasSize()
-  canvasCtx.clearRect(0, 0, 999, 999)
+  canvasCtx.clearRect(0, 0, 9999, 9999)
   canvasCtx.putImageData(pixObj.getAllPixel(), 0, 0)
 }
 
